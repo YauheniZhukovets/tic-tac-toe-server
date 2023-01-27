@@ -33,20 +33,25 @@ const io = require('socket.io')(server, {
     }
 })
 
-io.on("connection", (socket) => {
-    console.log("User Connected");
+io.on('connection', (socket) => {
+    console.log('User Connected')
 
-    socket.on("joinRoom", (roomCode) => {
-        console.log(`A user joined the room ${roomCode}`);
+    socket.on('joinRoom', (roomCode) => {
+        console.log(`A user joined the room ${roomCode}`)
         socket.join(roomCode);
     });
 
-    socket.on("play", ({ id, roomCode }) => {
+    socket.on('play', ({id, roomCode}) => {
         console.log(`play at ${id} to ${roomCode}`);
-        socket.broadcast.to(roomCode).emit("updateGame", id);
-    });
+        socket.broadcast.to(roomCode).emit('updateGame', id)
+    })
 
-    socket.on("disconnect", () => {
-        console.log("User Disconnected");
-    });
-});
+    socket.on('change', ({room, name}) => {
+        console.log(`Change player ${name} to ${room._id} room`);
+        io.in(room._id).emit('updateName', name)
+    })
+
+    socket.on('disconnect', () => {
+        console.log('User Disconnected')
+    })
+})
